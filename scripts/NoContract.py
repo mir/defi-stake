@@ -1,0 +1,2 @@
+class NoContract(Exception):
+    pass

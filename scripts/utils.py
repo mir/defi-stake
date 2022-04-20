@@ -1,6 +1,7 @@
 from brownie import (
     accounts, config, network, Contract,
-    MaratsNFT
+    DappToken,
+    TokenFarm    
     )
 from web3 import Web3
 from scripts import (
@@ -9,18 +10,19 @@ from scripts import (
 
 FORKED_LOCAL_ENVIRONMENTS = ["mainnet-forked", "mainnet-fork-dev"]
 LOCAL_BLOCKHAIN_ENVIRONMENTS = ["development", "ganache-local"]
-CONTRACT_NAMES = {"MaratsNFT": MaratsNFT}
+CONTRACT_NAMES = {"DappToken": DappToken, "TokenFarm":TokenFarm}
 
-def get_contract(name):
+def get_contract(name, *args):
     if name not in CONTRACT_NAMES:
-        raise NoContract("Contract name is not known")    
+        raise NoContract(f"Contract {name} is not known")    
     contract_type = CONTRACT_NAMES[name]
     if not contract_type:
-        deploy_contract(contract_type)
+        deploy_contract(contract_type, *args)
     return contract_type[-1]
 
-def deploy_contract(contract):
+def deploy_contract(contract, *args):
     contract.deploy(
+        *args,
         {"from": get_account()},
         publish_source=config["networks"][network.show_active()].get("verify", False))
 
