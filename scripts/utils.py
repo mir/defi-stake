@@ -14,6 +14,7 @@ from scripts import (
 
 FORKED_LOCAL_ENVIRONMENTS = ["mainnet-forked", "mainnet-fork-dev"]
 LOCAL_BLOCKHAIN_ENVIRONMENTS = ["development", "ganache-local"]
+
 CONTRACT_NAMES = {
     "DappToken": DappToken,
     "TokenFarm":TokenFarm,
@@ -31,13 +32,30 @@ BASE_FEE = 100000000000000000  # The premium
 GAS_PRICE_LINK = 1e9  # Some value calculated depending on the Layer 1 cost and Link
 
 def get_contract(name, *args):
-    print(f"get contract {name}")
+    print(f"Get contract {name}")
     if name not in CONTRACT_NAMES:
         raise NoContract(f"Contract {name} is not known")    
     contract_type = CONTRACT_NAMES[name]
-    if not contract_type:
-        deploy_mocks()
-    return contract_type[-1]
+    
+    if network.show_active() in LOCAL_BLOCKHAIN_ENVIRONMENTS:
+        if len(contract_type) <= 0:
+            deploy_mocks()
+        contract = contract_type[-1]
+    else:
+        try:
+            contract_address = config["networks"][network.show_active()][name]
+            contract = Contract.from_abi(
+                contract_type._name, contract_address, contract_type.abi
+            )
+            print(f'  {network.show_active()} address: {contract_address}')
+        except KeyError:
+            print(
+                f"{network.show_active()} address of {name} not found, perhaps you should add it to the config or deploy mocks?"
+            )
+            print(
+                f"brownie run scripts/deploy_mocks.py --network {network.show_active()}"
+            )
+    return contract
 
 def get_account(index=None, id=None):
     if index:

@@ -16,5 +16,8 @@ networks:
     key_hash: '0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc'
     subscription_id: 2671
     verify: True
+    weth_token: '0xc778417E063141139Fce010982780140Aa0cD5Ab'
+    dai_token: '0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa'
+    fau_token: '0xFab46E002BbF0b4509813474841E0716E6730136'
 wallets: 
   from_key: ${PRIVATE_KEY}  
