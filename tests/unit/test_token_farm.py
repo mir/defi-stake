@@ -58,6 +58,10 @@ def test_stake_tokens(amount_staked):
     assert (
         token_farm.tokenStakerBalance(dapp_token.address, account.address) == amount_staked
     ) 
+    assert token_farm.uniqueTokensStaked(account.address) == 1
+    assert token_farm.stakers(0) == account.address
+    return token_farm, dapp_token
+
 
 def test_issue_tokens_():
     pass

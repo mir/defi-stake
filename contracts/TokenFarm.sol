@@ -11,7 +11,7 @@ contract TokenFarm is Ownable {
     address[] public allowedTokens;
     mapping (address => mapping (address => uint256)) public tokenStakerBalance;
     address[] public stakers;
-    mapping(address => uint256) uniqueTokensStaked;
+    mapping(address => uint256) public uniqueTokensStaked;
     IERC20 public  dappToken; 
     mapping(address => address) public tokenPriceFeedMap; 
 
