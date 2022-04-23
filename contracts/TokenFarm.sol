@@ -74,12 +74,12 @@ contract TokenFarm is Ownable {
     }
 
     function getUserSingleTokenValue(address _user, address _token)
-        public view returns(uint256){
-        if (uniqueTokensStaked[_token] <= 0) {
+        public view returns(uint256) {
+        if (uniqueTokensStaked[_user] <= 0) {
             return 0;
         }
         (uint256 tokenPrice,  uint256 decimals) = getTokenValue(_token);
-        return (tokenStakerBalance[_token][_user] * tokenPrice / (10**decimals));
+        return (tokenPrice / (10**decimals) * tokenStakerBalance[_token][_user]);
     }
 
     function getTokenValue(address _token) public view returns(uint256,uint256) {

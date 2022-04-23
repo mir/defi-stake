@@ -28,6 +28,8 @@ CONTRACT_NAMES = {
 
 DECIMALS = 18
 INITIAL_VALUE = Web3.toWei(2000, "ether")
+INITIAL_SUPPLY = Web3.toWei(1e6, "ether")
+
 BASE_FEE = 100000000000000000  # The premium
 GAS_PRICE_LINK = 1e9  # Some value calculated depending on the Layer 1 cost and Link
 
@@ -81,10 +83,10 @@ def deploy_mocks(decimals=DECIMALS, initial_value=INITIAL_VALUE):
         decimals, initial_value, {"from": account}
     )
     print("Deploying mock DAI")
-    mock_dai = MockDAI.deploy(initial_value, {"from": account})
+    mock_dai = MockDAI.deploy(INITIAL_SUPPLY, {"from": account})
     print(f"Deployed to {mock_dai.address}")
     print("Deploying mock WETH")
-    mock_weth = MockWETH.deploy(initial_value, {"from": account})
+    mock_weth = MockWETH.deploy(INITIAL_SUPPLY, {"from": account})
     print(f"Deployed to {mock_weth.address}")
 
 def listen_for_event(brownie_contract, event, timeout=200, poll_interval=2):

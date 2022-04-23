@@ -7,10 +7,12 @@ from brownie import (
     exceptions
 )
 import pytest
+from sqlalchemy import DECIMAL
 from scripts.utils import (
     get_account,
     get_contract,
-    LOCAL_BLOCKHAIN_ENVIRONMENTS
+    LOCAL_BLOCKHAIN_ENVIRONMENTS,
+    INITIAL_VALUE
 )
 import pytest
 from scripts.deploy import (
@@ -50,7 +52,7 @@ def test_stake_tokens(amount_staked):
     if network.show_active() not in LOCAL_BLOCKHAIN_ENVIRONMENTS:
         pytest.skip("Only for local blockchains")
     
-    account = get_account()    
+    account = get_account()
     token_farm, dapp_token = deploy()
     dapp_token.approve(token_farm.address, amount_staked, {"from": account})
     token_farm.stakeToken(amount_staked, dapp_token.address, {"from": account})
@@ -62,6 +64,39 @@ def test_stake_tokens(amount_staked):
     assert token_farm.stakers(0) == account.address
     return token_farm, dapp_token
 
+def test_token_value():
+    if network.show_active() not in LOCAL_BLOCKHAIN_ENVIRONMENTS:
+        pytest.skip("Only for local blockchains")
+    
+    account = get_account()
+    token_farm, dapp_token = deploy()
+    token_value, decimals = token_farm.getTokenValue(dapp_token.address)
+    assert  INITIAL_VALUE == token_value
+    assert  18 == decimals
+    return token_value, decimals
 
-def test_issue_tokens_():
-    pass
+def test_get_user_single_token_value(amount_staked):
+    if network.show_active() not in LOCAL_BLOCKHAIN_ENVIRONMENTS:
+        pytest.skip("Only for local blockchains")
+    
+    account = get_account()
+    token_farm, dapp_token = test_stake_tokens(amount_staked)    
+
+    test_value = token_farm.getUserSingleTokenValue(account.address,dapp_token.address)
+
+    token_value, decimals = test_token_value()
+    expected_value = (token_value / 10**decimals) * amount_staked
+    assert test_value == expected_value
+
+def test_issue_tokens(amount_staked):
+    if network.show_active() not in LOCAL_BLOCKHAIN_ENVIRONMENTS:
+        pytest.skip("Only for local blockchains")
+    
+    account = get_account() 
+    token_farm, dapp_token = test_stake_tokens(amount_staked)
+    starting_balance = dapp_token.balanceOf(account.address)
+
+    token_farm.issueTokens({"from":account})
+    assert (
+        dapp_token.balanceOf(account.address) == starting_balance + INITIAL_VALUE
+    )

@@ -7,7 +7,7 @@ from scripts.utils import get_contract, get_account
 from web3 import Web3
 
 KEPT_DAPP_AMOUNT = Web3.toWei(100, "ether")
-DAPP_TOTAL_SUPPLY = Web3.toWei(1000, "ether")
+DAPP_TOTAL_SUPPLY = Web3.toWei(1e6, "ether")
 
 def deploy():
     account = get_account()
